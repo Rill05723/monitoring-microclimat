@@ -23,7 +23,7 @@ export default function Dashboard() {
 
       const rows: any[] = [];
 
-      // 🔥 Ambil data hari ini saja (24 jam)
+      // ✅ Ambil data hari ini (24 jam)
       if (val[today]) {
         Object.keys(val[today]).forEach(time => {
           const item = val[today][time];
@@ -35,7 +35,7 @@ export default function Dashboard() {
         });
       }
 
-      // 🔥 Urutkan berdasarkan jam
+      // ✅ Urutkan berdasarkan waktu
       rows.sort((a, b) => a.time.localeCompare(b.time));
 
       setSeries(rows);
@@ -53,7 +53,9 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold text-green-400">
           🌱 Monitoring Microclimate
         </h1>
-        <span className="text-gray-400">Realtime Environment Data (24 Jam)</span>
+        <span className="text-gray-400">
+          Realtime Environment Data (24 Jam)
+        </span>
       </header>
 
       {/* KPI */}
@@ -74,17 +76,8 @@ export default function Dashboard() {
         <Chart data={series} keyName="lux" title="Cahaya (lux)" />
       </section>
 
-      {/* SUMMARY */}
+      {/* UPDATE TERAKHIR */}
       <section className="grid md:grid-cols-3 gap-6">
-        <Card>
-          <h3 className="text-green-400 mb-2">📈 Ringkasan Kondisi</h3>
-          <p>
-            Data ditampilkan berdasarkan monitoring 24 jam terakhir.
-            Kondisi lingkungan saat ini berada pada status
-            <b className="text-green-400"> NORMAL</b>.
-          </p>
-        </Card>
-
         <Card>
           <h3 className="text-green-400 mb-2">🕒 Update Terakhir</h3>
           <p>{latest.time}</p>
@@ -120,8 +113,8 @@ function Chart({ data, keyName, title }: any) {
       <h3 className="text-green-400 mb-2">{title}</h3>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={data}>
-          {/* 🔥 X-AXIS JAM */}
-          <XAxis 
+          {/* ✅ X-AXIS WAKTU */}
+          <XAxis
             dataKey="time"
             tick={{ fontSize: 10 }}
             interval="preserveStartEnd"
