@@ -18,18 +18,27 @@ export default function Dashboard() {
       const val = snap.val();
       if (!val) return;
 
+      const now = new Date();
+      const today = now.toISOString().split("T")[0];
+
       const rows: any[] = [];
-      Object.keys(val).forEach(date => {
-        Object.keys(val[date]).forEach(time => {
+
+      // 🔥 Ambil data hari ini saja (24 jam)
+      if (val[today]) {
+        Object.keys(val[today]).forEach(time => {
+          const item = val[today][time];
+
           rows.push({
-            time: `${date} ${time}`,
-            ...val[date][time]
+            time: time.substring(0, 5).replace("-", ":"), // HH:MM
+            ...item
           });
         });
-      });
+      }
 
-      rows.sort((a,b)=>new Date(a.time).getTime()-new Date(b.time).getTime());
-      setSeries(rows.slice(-30));
+      // 🔥 Urutkan berdasarkan jam
+      rows.sort((a, b) => a.time.localeCompare(b.time));
+
+      setSeries(rows);
       setLatest(rows.at(-1));
     });
   }, []);
@@ -44,7 +53,7 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold text-green-400">
           🌱 Monitoring Microclimate
         </h1>
-        <span className="text-gray-400">Realtime Environment Data</span>
+        <span className="text-gray-400">Realtime Environment Data (24 Jam)</span>
       </header>
 
       {/* KPI */}
@@ -70,7 +79,8 @@ export default function Dashboard() {
         <Card>
           <h3 className="text-green-400 mb-2">📈 Ringkasan Kondisi</h3>
           <p>
-            Kondisi microclimate saat ini berada pada status
+            Data ditampilkan berdasarkan monitoring 24 jam terakhir.
+            Kondisi lingkungan saat ini berada pada status
             <b className="text-green-400"> NORMAL</b>.
           </p>
         </Card>
@@ -110,7 +120,12 @@ function Chart({ data, keyName, title }: any) {
       <h3 className="text-green-400 mb-2">{title}</h3>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={data}>
-          <XAxis dataKey="time" hide />
+          {/* 🔥 X-AXIS JAM */}
+          <XAxis 
+            dataKey="time"
+            tick={{ fontSize: 10 }}
+            interval="preserveStartEnd"
+          />
           <YAxis />
           <Tooltip />
           <Line
