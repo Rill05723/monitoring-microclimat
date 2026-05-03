@@ -14,31 +14,34 @@ export default function Dashboard() {
   useEffect(() => {
     const dbRef = ref(db, "agro/mega/timeseries");
 
-    onValue(dbRef, snap => {
+    onValue(dbRef, (snap) => {
       const val = snap.val();
       if (!val) return;
 
       const rows: any[] = [];
 
-      // 🔥 AMBIL SEMUA DATA (TIDAK TERGANTUNG HARI)
-      Object.keys(val).forEach(date => {
-        Object.keys(val[date]).forEach(time => {
+      // 🔥 Ambil semua tanggal lalu pilih yang TERAKHIR
+      const dates = Object.keys(val).sort();
+      const lastDate = dates.at(-1);
+
+      // 🔥 Ambil data hanya dari tanggal terakhir
+      if (lastDate && val[lastDate]) {
+        Object.keys(val[lastDate]).forEach((time) => {
+          const item = val[lastDate][time];
+
           rows.push({
-            time: `${date} ${time.replace("-", ":")}`, // format waktu
-            rawTime: `${date} ${time}`, // untuk sorting
-            ...val[date][time]
+            time: time.substring(0, 5).replace("-", ":"), // HH:MM
+            rawTime: `${lastDate} ${time}`, // untuk sorting
+            ...item
           });
         });
-      });
+      }
 
-      // 🔥 URUTKAN BERDASARKAN WAKTU
-      rows.sort((a, b) => new Date(a.rawTime).getTime() - new Date(b.rawTime).getTime());
+      // 🔥 Urutkan berdasarkan jam
+      rows.sort((a, b) => a.time.localeCompare(b.time));
 
-      // 🔥 AMBIL DATA 24 JAM TERAKHIR (±100 data)
-      const lastData = rows.slice(-100);
-
-      setSeries(lastData);
-      setLatest(lastData.at(-1));
+      setSeries(rows);
+      setLatest(rows.at(-1));
     });
   }, []);
 
@@ -53,7 +56,7 @@ export default function Dashboard() {
           🌱 Monitoring Microclimate
         </h1>
         <span className="text-gray-400">
-          Realtime Environment Data (Auto)
+          Data Harian (Otomatis Hari Terakhir)
         </span>
       </header>
 
@@ -79,7 +82,7 @@ export default function Dashboard() {
       <section className="grid md:grid-cols-3 gap-6">
         <Card>
           <h3 className="text-green-400 mb-2">🕒 Update Terakhir</h3>
-          <p>{latest.time}</p>
+          <p>{latest.rawTime}</p>
           <p className="text-green-400 mt-2">Sensor Online</p>
         </Card>
       </section>
@@ -91,7 +94,7 @@ export default function Dashboard() {
   );
 }
 
-/* ==== COMPONENT ==== */
+/* ===== COMPONENT ===== */
 
 function KPI({ icon, label, value, unit, max }: any) {
   return (
