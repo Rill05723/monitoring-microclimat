@@ -18,28 +18,27 @@ export default function Dashboard() {
       const val = snap.val();
       if (!val) return;
 
-      const now = new Date();
-      const today = now.toISOString().split("T")[0];
-
       const rows: any[] = [];
 
-      // ✅ Ambil data hari ini (24 jam)
-      if (val[today]) {
-        Object.keys(val[today]).forEach(time => {
-          const item = val[today][time];
-
+      // 🔥 AMBIL SEMUA DATA (TIDAK TERGANTUNG HARI)
+      Object.keys(val).forEach(date => {
+        Object.keys(val[date]).forEach(time => {
           rows.push({
-            time: time.substring(0, 5).replace("-", ":"), // HH:MM
-            ...item
+            time: `${date} ${time.replace("-", ":")}`, // format waktu
+            rawTime: `${date} ${time}`, // untuk sorting
+            ...val[date][time]
           });
         });
-      }
+      });
 
-      // ✅ Urutkan berdasarkan waktu
-      rows.sort((a, b) => a.time.localeCompare(b.time));
+      // 🔥 URUTKAN BERDASARKAN WAKTU
+      rows.sort((a, b) => new Date(a.rawTime).getTime() - new Date(b.rawTime).getTime());
 
-      setSeries(rows);
-      setLatest(rows.at(-1));
+      // 🔥 AMBIL DATA 24 JAM TERAKHIR (±100 data)
+      const lastData = rows.slice(-100);
+
+      setSeries(lastData);
+      setLatest(lastData.at(-1));
     });
   }, []);
 
@@ -54,7 +53,7 @@ export default function Dashboard() {
           🌱 Monitoring Microclimate
         </h1>
         <span className="text-gray-400">
-          Realtime Environment Data (24 Jam)
+          Realtime Environment Data (Auto)
         </span>
       </header>
 
@@ -113,7 +112,6 @@ function Chart({ data, keyName, title }: any) {
       <h3 className="text-green-400 mb-2">{title}</h3>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={data}>
-          {/* ✅ X-AXIS WAKTU */}
           <XAxis
             dataKey="time"
             tick={{ fontSize: 10 }}
