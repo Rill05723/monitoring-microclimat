@@ -643,7 +643,7 @@ const aiAdvice = prediction
     <Card>
 
       <h2 className="text-2xl font-bold text-green-400 mb-6">
-        🤖 Prediksi AI (1 Jam Kedepan)
+         Prediksi 1 Jam Kedepan
       </h2>
       <p className="text-sm text-gray-400 mb-6">
   Dibuat:
