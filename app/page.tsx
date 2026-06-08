@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { db } from "@/lib/firebase";
+
 import {
   LineChart,
   Line,
@@ -88,7 +89,7 @@ const rules = {
           info:
             "Suhu tanah berada di bawah rentang ideal.",
           action:
-            "Suhu tanah yang rendah berpotensi menghambat pertumbuhan tanaman. Pertahankan kondisi greenhouse agar suhu tanah kembali ke rentang ideal.",
+            "Pertahankan kondisi greenhouse agar suhu tanah kembali ke rentang ideal.",
         };
 
       if (v <= 27)
@@ -134,9 +135,9 @@ const rules = {
         status: "Basah",
         info:
           "Kelembapan tanah terlalu tinggi.",
-          action:
+        action:
           "Kurangi penyiraman dan periksa sistem drainase.",
-        };
+      };
     },
   },
 };
@@ -145,60 +146,174 @@ export default function Dashboard() {
   const [latest, setLatest] = useState<any>(null);
   const [series, setSeries] = useState<any[]>([]);
 
-  /* =========================================
-     INFORMASI TANAMAN
-  ========================================= */
-
   const [selectedPlant, setSelectedPlant] =
     useState<string | null>(null);
+
+  /* =========================================
+     DATA TANAMAN
+  ========================================= */
 
   const plants = [
     {
       id: "cabai",
       icon: "🌶️",
       title: "Cabai",
+
+      scientific:
+        "Capsicum annuum L.",
+
       description:
-        "Cabai (Capsicum annuum L.) merupakan salah satu komoditas hortikultura yang memiliki nilai ekonomi tinggi dan banyak dibudidayakan di Indonesia. Monitoring mikroklimat dapat membantu menjaga kondisi lingkungan yang mendukung pertumbuhan tanaman cabai.",
+        "Cabai merupakan salah satu komoditas hortikultura yang memiliki nilai ekonomi tinggi dan banyak dibudidayakan di Indonesia.",
+
+      benefit: [
+        "Sumber vitamin A dan vitamin C",
+        "Memiliki nilai ekonomi tinggi",
+        "Banyak digunakan sebagai bahan pangan",
+      ],
+
+      characteristic: [
+        "Tanaman semusim",
+        "Memiliki sistem perakaran serabut",
+        "Dapat dibudidayakan di greenhouse",
+      ],
+
+      greenhouse:
+        "Budidaya cabai di greenhouse membantu menjaga kestabilan kondisi lingkungan sehingga tanaman lebih terlindungi dari perubahan cuaca.",
     },
 
     {
       id: "tomat",
       icon: "🍅",
       title: "Tomat",
+
+      scientific:
+        "Solanum lycopersicum L.",
+
       description:
-        "Tomat (Solanum lycopersicum L.) merupakan tanaman buah yang banyak dimanfaatkan sebagai bahan pangan. Pengelolaan kondisi lingkungan greenhouse membantu meningkatkan kualitas hasil panen dan mengurangi pengaruh cuaca ekstrem.",
+        "Tomat merupakan tanaman buah yang banyak dimanfaatkan sebagai bahan pangan dan memiliki nilai ekonomi yang tinggi.",
+
+      benefit: [
+        "Mengandung vitamin C",
+        "Sumber antioksidan likopen",
+        "Banyak digunakan sebagai bahan pangan",
+      ],
+
+      characteristic: [
+        "Tanaman semusim",
+        "Menghasilkan buah selama masa produksi",
+        "Memerlukan penyangga saat pertumbuhan",
+      ],
+
+      greenhouse:
+        "Greenhouse membantu menjaga kestabilan lingkungan sehingga kualitas dan produktivitas tomat dapat meningkat.",
     },
 
     {
       id: "mentimun",
       icon: "🥒",
       title: "Mentimun",
+
+      scientific:
+        "Cucumis sativus L.",
+
       description:
-        "Mentimun (Cucumis sativus L.) merupakan tanaman sayuran yang memiliki pertumbuhan relatif cepat. Monitoring lingkungan membantu menjaga kondisi budidaya yang lebih stabil selama masa pertumbuhan.",
+        "Mentimun merupakan tanaman sayuran yang memiliki pertumbuhan relatif cepat dan banyak dikonsumsi dalam keadaan segar.",
+
+      benefit: [
+        "Menyegarkan tubuh",
+        "Mengandung banyak air",
+        "Banyak digunakan sebagai lalapan",
+      ],
+
+      characteristic: [
+        "Tanaman merambat",
+        "Pertumbuhan relatif cepat",
+        "Membutuhkan penyangga",
+      ],
+
+      greenhouse:
+        "Monitoring lingkungan membantu menjaga kestabilan kondisi budidaya mentimun selama masa pertumbuhan.",
     },
 
     {
       id: "selada",
       icon: "🥬",
       title: "Selada",
+
+      scientific:
+        "Lactuca sativa L.",
+
       description:
-        "Selada (Lactuca sativa L.) merupakan sayuran daun yang populer dalam budidaya greenhouse. Pemantauan kondisi lingkungan dapat membantu menjaga kualitas daun dan mendukung pertumbuhan tanaman.",
+        "Selada merupakan sayuran daun yang populer dan sering dibudidayakan dalam greenhouse.",
+
+      benefit: [
+        "Mengandung vitamin A",
+        "Mengandung vitamin K",
+        "Banyak digunakan dalam salad",
+      ],
+
+      characteristic: [
+        "Sayuran daun",
+        "Masa panen relatif singkat",
+        "Mudah dibudidayakan",
+      ],
+
+      greenhouse:
+        "Pemantauan kondisi lingkungan membantu menjaga kualitas daun dan pertumbuhan tanaman selada.",
     },
 
     {
       id: "terong",
       icon: "🍆",
       title: "Terong",
+
+      scientific:
+        "Solanum melongena L.",
+
       description:
-        "Terong (Solanum melongena L.) merupakan tanaman hortikultura yang banyak dibudidayakan di daerah tropis. Monitoring mikroklimat membantu menjaga kestabilan lingkungan yang berpengaruh terhadap pertumbuhan tanaman.",
+        "Terong merupakan tanaman hortikultura yang banyak dibudidayakan di daerah tropis.",
+
+      benefit: [
+        "Mengandung serat",
+        "Sumber antioksidan",
+        "Banyak dimanfaatkan sebagai bahan pangan",
+      ],
+
+      characteristic: [
+        "Tanaman buah",
+        "Adaptif terhadap iklim tropis",
+        "Memiliki umur panen cukup panjang",
+      ],
+
+      greenhouse:
+        "Monitoring mikroklimat membantu menjaga kestabilan lingkungan yang berpengaruh terhadap pertumbuhan tanaman terong.",
     },
 
     {
       id: "pakcoy",
       icon: "🌱",
       title: "Pakcoy",
+
+      scientific:
+        "Brassica rapa L.",
+
       description:
-        "Pakcoy (Brassica rapa L.) merupakan sayuran daun yang memiliki masa panen relatif singkat. Greenhouse yang dilengkapi sistem monitoring dapat membantu menciptakan lingkungan budidaya yang lebih terkontrol.",
+        "Pakcoy merupakan sayuran daun yang memiliki masa panen relatif singkat dan banyak dikonsumsi masyarakat.",
+
+      benefit: [
+        "Kaya vitamin A",
+        "Kaya vitamin C",
+        "Memiliki nilai gizi tinggi",
+      ],
+
+      characteristic: [
+        "Sayuran daun",
+        "Pertumbuhan cepat",
+        "Mudah dibudidayakan",
+      ],
+
+      greenhouse:
+        "Greenhouse yang dilengkapi monitoring membantu menciptakan lingkungan budidaya yang lebih terkontrol.",
     },
   ];
 
@@ -228,7 +343,8 @@ export default function Dashboard() {
                 .substring(0, 5)
                 .replace("-", ":"),
 
-              rawTime: `${lastDate} ${time}`,
+              rawTime:
+                `${lastDate} ${time}`,
 
               ...item,
             });
@@ -275,8 +391,6 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen max-w-7xl mx-auto p-8">
 
-      {/* HEADER */}
-
       <header className="flex justify-between mb-10">
         <h1 className="text-3xl font-bold text-green-400">
           🌱 Monitoring Microclimate
@@ -286,8 +400,6 @@ export default function Dashboard() {
           Data Harian (Otomatis Hari Terakhir)
         </span>
       </header>
-
-      {/* KPI */}
 
       <section className="grid md:grid-cols-5 gap-6 mb-12">
 
@@ -333,6 +445,7 @@ export default function Dashboard() {
 
       </section>
             {/* CHART */}
+
       <section className="grid md:grid-cols-2 gap-6 mb-10">
 
         <Chart
@@ -412,7 +525,13 @@ export default function Dashboard() {
             <Card key={plant.id}>
 
               <button
-                className="w-full flex justify-between items-center"
+                className="
+                  w-full
+                  flex
+                  justify-between
+                  items-center
+                  text-left
+                "
                 onClick={() =>
                   setSelectedPlant(
                     selectedPlant === plant.id
@@ -424,13 +543,21 @@ export default function Dashboard() {
 
                 <div className="flex items-center gap-3">
 
-                  <span className="text-3xl">
+                  <span className="text-4xl">
                     {plant.icon}
                   </span>
 
-                  <span className="font-bold text-lg">
-                    {plant.title}
-                  </span>
+                  <div>
+
+                    <h3 className="font-bold text-lg text-green-400">
+                      {plant.title}
+                    </h3>
+
+                    <p className="text-sm text-gray-400">
+                      Klik untuk melihat informasi
+                    </p>
+
+                  </div>
 
                 </div>
 
@@ -444,9 +571,99 @@ export default function Dashboard() {
 
               {selectedPlant === plant.id && (
 
-                <div className="mt-4 text-gray-300 leading-relaxed">
+                <div className="mt-6 space-y-5 border-t border-green-500/20 pt-5">
 
-                  {plant.description}
+                  {/* Nama Ilmiah */}
+
+                  <div>
+
+                    <h4 className="font-semibold text-green-400 mb-1">
+                      Nama Ilmiah
+                    </h4>
+
+                    <p className="text-gray-300 italic">
+                      {plant.scientific}
+                    </p>
+
+                  </div>
+
+                  {/* Deskripsi */}
+
+                  <div>
+
+                    <h4 className="font-semibold text-green-400 mb-1">
+                      Deskripsi
+                    </h4>
+
+                    <p className="text-gray-300 leading-relaxed">
+                      {plant.description}
+                    </p>
+
+                  </div>
+
+                  {/* Manfaat */}
+
+                  <div>
+
+                    <h4 className="font-semibold text-green-400 mb-2">
+                      Manfaat
+                    </h4>
+
+                    <ul className="list-disc ml-6 text-gray-300 space-y-1">
+
+                      {plant.benefit.map(
+                        (
+                          item: string,
+                          index: number
+                        ) => (
+                          <li key={index}>
+                            {item}
+                          </li>
+                        )
+                      )}
+
+                    </ul>
+
+                  </div>
+
+                  {/* Karakteristik */}
+
+                  <div>
+
+                    <h4 className="font-semibold text-green-400 mb-2">
+                      Karakteristik
+                    </h4>
+
+                    <ul className="list-disc ml-6 text-gray-300 space-y-1">
+
+                      {plant.characteristic.map(
+                        (
+                          item: string,
+                          index: number
+                        ) => (
+                          <li key={index}>
+                            {item}
+                          </li>
+                        )
+                      )}
+
+                    </ul>
+
+                  </div>
+
+                  {/* Greenhouse */}
+
+                  <div>
+
+                    <h4 className="font-semibold text-green-400 mb-1">
+                      Kaitan dengan Greenhouse
+                    </h4>
+
+                    <p className="text-gray-300 leading-relaxed">
+                      {plant.greenhouse}
+                    </p>
+
+                  </div>
 
                 </div>
 
@@ -459,8 +676,7 @@ export default function Dashboard() {
         </div>
 
       </section>
-
-      {/* UPDATE TERAKHIR */}
+            {/* UPDATE TERAKHIR */}
 
       <section className="grid md:grid-cols-3 gap-6">
 
@@ -504,6 +720,7 @@ function KPI({
 }: any) {
   return (
     <Card>
+
       <div className="text-3xl mb-2">
         {icon}
       </div>
@@ -521,6 +738,7 @@ function KPI({
         max={max}
         className="w-full mt-2"
       />
+
     </Card>
   );
 }
@@ -536,6 +754,7 @@ function Chart({
 }: any) {
   return (
     <Card>
+
       <h3 className="text-green-400 mb-2">
         {title}
       </h3>
@@ -544,6 +763,7 @@ function Chart({
         width="100%"
         height={220}
       >
+
         <LineChart data={data}>
 
           <XAxis
@@ -564,10 +784,13 @@ function Chart({
           />
 
         </LineChart>
+
       </ResponsiveContainer>
+
     </Card>
   );
 }
+
 /* =========================================
    COMPONENT ANALYSIS CARD
 ========================================= */
