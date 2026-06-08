@@ -577,7 +577,7 @@ const aiAdvice = prediction
 
       <header className="flex justify-between mb-10">
         <h1 className="text-3xl font-bold text-green-400">
-          🌱 Monitoring Microclimate
+          Monitoring Microclimate UPT Produksi Benih Tanaman Pangan Hortikutura dan Perkebunan
         </h1>
 
         <span className="text-gray-400">
@@ -770,7 +770,7 @@ const aiAdvice = prediction
         />
 
         <AnalysisCard
-          icon="🌱"
+          icon="🌍"
           title="Suhu Tanah"
           data={tempSoil}
         />
@@ -788,7 +788,7 @@ const aiAdvice = prediction
       <section className="mb-10">
 
         <h2 className="text-2xl font-bold text-green-400 mb-6">
-          🌱 Informasi Tanaman Greenhouse
+           Informasi Tanaman Greenhouse
         </h2>
 
         <div className="space-y-4">
