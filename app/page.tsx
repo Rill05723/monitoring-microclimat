@@ -646,7 +646,7 @@ const aiAdvice = prediction
          Prediksi 1 Jam Kedepan
       </h2>
       <p className="text-sm text-gray-400 mb-6">
-  Dibuat:
+  Prediksi pada:
   {prediction.temp_air?.created_at}
 </p>
       
