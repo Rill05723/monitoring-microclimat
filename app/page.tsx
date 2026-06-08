@@ -141,14 +141,159 @@ const rules = {
     },
   },
 };
+/* =========================================
+   AI RECOMMENDATION
+========================================= */
 
+function getPredictionRecommendation(
+  temp: number,
+  hum: number
+) {
+
+  if (
+    temp >= 24 &&
+    temp <= 30 &&
+    hum >= 60 &&
+    hum <= 80
+  ) {
+
+    return {
+      status: "Optimal",
+      icon: "✅",
+      color: "text-green-400",
+      info:
+        "Kondisi lingkungan diperkirakan tetap stabil dalam 1 jam ke depan.",
+      action:
+        "Tidak diperlukan tindakan khusus selain pemantauan rutin."
+    };
+  }
+
+  if (
+    temp > 30 &&
+    hum < 60
+  ) {
+
+    return {
+      status: "Panas dan Kering",
+      icon: "🔥",
+      color: "text-orange-400",
+      info:
+        "Suhu diperkirakan meningkat sementara kelembapan udara menurun.",
+      action:
+        "Aktifkan kipas ventilasi dan lakukan penyiraman ringan untuk membantu menjaga kelembapan lingkungan greenhouse."
+    };
+  }
+
+  if (
+    temp > 30 &&
+    hum > 80
+  ) {
+
+    return {
+      status: "Panas dan Lembap",
+      icon: "🌡️",
+      color: "text-yellow-400",
+      info:
+        "Suhu dan kelembapan udara diperkirakan berada pada tingkat tinggi.",
+      action:
+        "Aktifkan kipas ventilasi untuk meningkatkan sirkulasi udara dan membantu mengurangi kelembapan berlebih."
+    };
+  }
+
+  if (
+    temp < 24 &&
+    hum > 80
+  ) {
+
+    return {
+      status: "Dingin dan Lembap",
+      icon: "🌫️",
+      color: "text-cyan-400",
+      info:
+        "Suhu diperkirakan rendah dengan kelembapan udara tinggi.",
+      action:
+        "Kurangi ventilasi sementara dan lakukan pemantauan kondisi greenhouse secara berkala."
+    };
+  }
+
+  if (
+    temp < 24 &&
+    hum < 60
+  ) {
+
+    return {
+      status: "Dingin dan Kering",
+      icon: "❄️",
+      color: "text-blue-400",
+      info:
+        "Suhu dan kelembapan udara berada di bawah rentang ideal.",
+      action:
+        "Kurangi ventilasi dan lakukan pemantauan kondisi lingkungan greenhouse."
+    };
+  }
+
+  if (hum > 80) {
+
+    return {
+      status: "Kelembapan Tinggi",
+      icon: "💧",
+      color: "text-sky-400",
+      info:
+        "Kelembapan udara diperkirakan meningkat.",
+      action:
+        "Pastikan sirkulasi udara greenhouse tetap baik."
+    };
+  }
+
+  if (temp > 30) {
+
+    return {
+      status: "Suhu Tinggi",
+      icon: "☀️",
+      color: "text-red-400",
+      info:
+        "Suhu udara diperkirakan berada di atas rentang ideal.",
+      action:
+        "Aktifkan kipas ventilasi untuk membantu menjaga kestabilan suhu."
+    };
+  }
+
+  return {
+    status: "Monitoring",
+    icon: "📊",
+    color: "text-gray-400",
+    info:
+      "Kondisi lingkungan diperkirakan masih aman.",
+    action:
+      "Lanjutkan pemantauan berkala terhadap kondisi greenhouse."
+  };
+}
 export default function Dashboard() {
-  const [latest, setLatest] = useState<any>(null);
-  const [series, setSeries] = useState<any[]>([]);
+
+  /* =========================================
+     DATA SENSOR
+  ========================================= */
+
+  const [latest, setLatest] =
+    useState<any>(null);
+
+  const [series, setSeries] =
+    useState<any[]>([]);
+
+  /* =========================================
+     DATA PREDIKSI AI
+  ========================================= */
+
+  const [prediction, setPrediction] =
+    useState<any>(null);
+
+  /* =========================================
+     DATA TANAMAN
+  ========================================= */
 
   const [selectedPlant, setSelectedPlant] =
     useState<string | null>(null);
-
+  
   /* =========================================
      DATA TANAMAN
   ========================================= */
@@ -360,6 +505,28 @@ export default function Dashboard() {
       setLatest(rows.at(-1));
     });
   }, []);
+  /* =========================================
+   DATA PREDIKSI AI
+========================================= */
+
+useEffect(() => {
+
+  const predRef = ref(
+    db,
+    "agro/mega/predictions"
+  );
+
+  onValue(predRef, (snap) => {
+
+    const val = snap.val();
+
+    if (!val) return;
+
+    setPrediction(val);
+
+  });
+
+}, []);
 
   if (!latest)
     return (
@@ -387,6 +554,23 @@ export default function Dashboard() {
     rules.soil_pct.getStatus(
       Number(latest.soil_pct)
     );
+  /* =========================================
+   AI PREDICTION ANALYSIS
+========================================= */
+
+const aiAdvice = prediction
+  ? getPredictionRecommendation(
+
+      Number(
+        prediction.temp_air?.value ?? 0
+      ),
+
+      Number(
+        prediction.hum_air?.value ?? 0
+      )
+
+    )
+  : null;
 
   return (
     <main className="min-h-screen max-w-7xl mx-auto p-8">
@@ -446,7 +630,96 @@ export default function Dashboard() {
       </section>
             {/* CHART */}
 
-      <section className="grid md:grid-cols-2 gap-6 mb-10">
+    
+
+{/* =========================================
+    AI PREDICTION
+========================================= */}
+
+{prediction && aiAdvice && (
+
+  <section className="mb-10">
+
+    <Card>
+
+      <h2 className="text-2xl font-bold text-green-400 mb-6">
+        🤖 Prediksi AI (1 Jam Kedepan)
+      </h2>
+      <p className="text-sm text-gray-400 mb-6">
+  Dibuat:
+  {prediction.temp_air?.created_at}
+</p>
+      
+
+      <div className="grid md:grid-cols-2 gap-6 mb-6">
+
+        <div>
+
+          <p className="text-gray-400">
+            Prediksi Suhu Udara
+          </p>
+
+          <p className="text-4xl font-bold text-orange-400">
+            {prediction.temp_air?.value} °C
+          </p>
+
+        </div>
+
+        <div>
+
+          <p className="text-gray-400">
+            Prediksi Kelembapan Udara
+          </p>
+
+          <p className="text-4xl font-bold text-cyan-400">
+            {prediction.hum_air?.value} %
+          </p>
+
+        </div>
+
+      </div>
+
+      <div className="border-t border-white/10 pt-4">
+
+        <h3 className="font-bold text-lg mb-2">
+          {aiAdvice.icon} {aiAdvice.status}
+        </h3>
+
+        <div className="mb-4">
+
+          <p className="font-semibold text-gray-300">
+            Analisis
+          </p>
+
+          <p className="text-gray-400">
+            {aiAdvice.info}
+          </p>
+
+        </div>
+
+        <div>
+
+          <p className="font-semibold text-gray-300">
+            Rekomendasi
+          </p>
+
+          <p className="text-gray-400">
+            {aiAdvice.action}
+          </p>
+
+        </div>
+
+      </div>
+
+    </Card>
+
+  </section>
+
+)}
+
+{/* CHART */}
+
+<section className="grid md:grid-cols-2 gap-6 mb-10">
 
         <Chart
           data={series}
