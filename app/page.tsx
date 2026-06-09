@@ -286,6 +286,23 @@ export default function Dashboard() {
 
   const [prediction, setPrediction] =
     useState<any>(null);
+  const latestTempPrediction =
+  prediction?.temp_air
+    ? Object.entries(prediction.temp_air)
+        .sort(([a], [b]) =>
+          a.localeCompare(b)
+        )
+        .at(-1)?.[1]
+    : null;
+
+const latestHumPrediction =
+  prediction?.hum_air
+    ? Object.entries(prediction.hum_air)
+        .sort(([a], [b]) =>
+          a.localeCompare(b)
+        )
+        .at(-1)?.[1]
+    : null;
 
   /* =========================================
      DATA TANAMAN
@@ -558,19 +575,18 @@ useEffect(() => {
    AI PREDICTION ANALYSIS
 ========================================= */
 
-const aiAdvice = prediction
-  ? getPredictionRecommendation(
-
-      Number(
-        prediction.temp_air?.value ?? 0
-      ),
-
-      Number(
-        prediction.hum_air?.value ?? 0
+const aiAdvice =
+  latestTempPrediction &&
+  latestHumPrediction
+    ? getPredictionRecommendation(
+        Number(
+          latestTempPrediction.value
+        ),
+        Number(
+          latestHumPrediction.value
+        )
       )
-
-    )
-  : null;
+    : null;
 
   return (
     <main className="min-h-screen max-w-7xl mx-auto p-8">
@@ -636,7 +652,9 @@ const aiAdvice = prediction
     AI PREDICTION
 ========================================= */}
 
-{prediction && aiAdvice && (
+{latestTempPrediction &&
+ latestHumPrediction &&
+ aiAdvice && (
 
   <section className="mb-10">
 
@@ -647,7 +665,7 @@ const aiAdvice = prediction
       </h2>
       <p className="text-sm text-gray-400 mb-6">
   Prediksi pada:
-  {prediction.temp_air?.created_at}
+  {latestTempPrediction?.created_at}
 </p>
       
 
@@ -660,7 +678,7 @@ const aiAdvice = prediction
           </p>
 
           <p className="text-4xl font-bold text-orange-400">
-            {prediction.temp_air?.value} °C
+            {latestTempPrediction?.value} °C
           </p>
 
         </div>
@@ -672,7 +690,7 @@ const aiAdvice = prediction
           </p>
 
           <p className="text-4xl font-bold text-cyan-400">
-            {prediction.hum_air?.value} %
+            {latestHumPrediction?.value} %
           </p>
 
         </div>
