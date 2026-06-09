@@ -286,26 +286,21 @@ export default function Dashboard() {
 
   const [prediction, setPrediction] =
     useState<any>(null);
-  const latestTempPrediction =
+  
+  const latestTempPrediction: any =
   prediction?.temp_air
     ? Object.entries(prediction.temp_air)
-        .filter(
-          ([_, v]) =>
-            typeof v === "object"
-        )
+        .filter(([_, v]) => typeof v === "object")
         .sort(([a], [b]) =>
           a.localeCompare(b)
         )
         .at(-1)?.[1]
     : null;
 
-const latestHumPrediction =
+const latestHumPrediction: any =
   prediction?.hum_air
     ? Object.entries(prediction.hum_air)
-        .filter(
-          ([_, v]) =>
-            typeof v === "object"
-        )
+        .filter(([_, v]) => typeof v === "object")
         .sort(([a], [b]) =>
           a.localeCompare(b)
         )
