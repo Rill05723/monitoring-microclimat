@@ -289,6 +289,10 @@ export default function Dashboard() {
   const latestTempPrediction =
   prediction?.temp_air
     ? Object.entries(prediction.temp_air)
+        .filter(
+          ([_, v]) =>
+            typeof v === "object"
+        )
         .sort(([a], [b]) =>
           a.localeCompare(b)
         )
@@ -298,6 +302,10 @@ export default function Dashboard() {
 const latestHumPrediction =
   prediction?.hum_air
     ? Object.entries(prediction.hum_air)
+        .filter(
+          ([_, v]) =>
+            typeof v === "object"
+        )
         .sort(([a], [b]) =>
           a.localeCompare(b)
         )
