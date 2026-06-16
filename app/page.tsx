@@ -160,7 +160,7 @@ function getPredictionRecommendation(
     return {
       status: "Optimal",
       icon: "✅",
-      color: "text-green-400",
+      color: "text-emerald-400",
       info:
         "Kondisi lingkungan diperkirakan tetap stabil dalam 1 jam ke depan.",
       action:
@@ -592,10 +592,22 @@ const aiAdvice =
     : null;
 
   return (
-    <main className="min-h-screen max-w-7xl mx-auto p-8">
+    <main
+  className="
+  min-h-screen
+  max-w-7xl
+  mx-auto
+  p-8
+  bg-gradient-to-br
+  from-slate-950
+  via-slate-900
+  to-blue-950
+  text-white
+"
+>
 
       <header className="flex justify-between mb-10">
-        <h1 className="text-3xl font-bold text-green-400">
+        <h1 className="text-3xl font-bold text-emerald-400">
           Monitoring Microclimate UPT Produksi Benih Tanaman Pangan Hortikutura dan Perkebunan
         </h1>
 
@@ -663,7 +675,7 @@ const aiAdvice =
 
     <Card>
 
-      <h2 className="text-2xl font-bold text-green-400 mb-6">
+      <h2 className="text-2xl font-bold text-emerald-400 mb-6">
          Prediksi 1 Jam Kedepan
       </h2>
       <p className="text-sm text-gray-400 mb-6">
@@ -808,7 +820,7 @@ const aiAdvice =
 
       <section className="mb-10">
 
-        <h2 className="text-2xl font-bold text-green-400 mb-6">
+        <h2 className="text-2xl font-bold text-emerald-400 mb-6">
            Informasi Tanaman Greenhouse
         </h2>
 
@@ -843,7 +855,7 @@ const aiAdvice =
 
                   <div>
 
-                    <h3 className="font-bold text-lg text-green-400">
+                    <h3 className="font-bold text-lg text-emerald-400">
                       {plant.title}
                     </h3>
 
@@ -855,7 +867,7 @@ const aiAdvice =
 
                 </div>
 
-                <span className="text-green-400 text-xl">
+                <span className="text-emerald-400 text-xl">
                   {selectedPlant === plant.id
                     ? "▲"
                     : "▼"}
@@ -871,7 +883,7 @@ const aiAdvice =
 
                   <div>
 
-                    <h4 className="font-semibold text-green-400 mb-1">
+                    <h4 className="font-semibold text-emerald-400 mb-1">
                       Nama Ilmiah
                     </h4>
 
@@ -885,7 +897,7 @@ const aiAdvice =
 
                   <div>
 
-                    <h4 className="font-semibold text-green-400 mb-1">
+                    <h4 className="font-semibold text-emerald-400 mb-1">
                       Deskripsi
                     </h4>
 
@@ -899,7 +911,7 @@ const aiAdvice =
 
                   <div>
 
-                    <h4 className="font-semibold text-green-400 mb-2">
+                    <h4 className="font-semibold text-emerald-400 mb-2">
                       Manfaat
                     </h4>
 
@@ -924,7 +936,7 @@ const aiAdvice =
 
                   <div>
 
-                    <h4 className="font-semibold text-green-400 mb-2">
+                    <h4 className="font-semibold text-emerald-400 mb-2">
                       Karakteristik
                     </h4>
 
@@ -949,7 +961,7 @@ const aiAdvice =
 
                   <div>
 
-                    <h4 className="font-semibold text-green-400 mb-1">
+                    <h4 className="font-semibold text-emerald-400 mb-1">
                       Kaitan dengan Greenhouse
                     </h4>
 
@@ -976,7 +988,7 @@ const aiAdvice =
 
         <Card>
 
-          <h3 className="text-green-400 mb-2">
+          <h3 className="text-emerald-400 mb-2">
             🕒 Update Terakhir
           </h3>
 
@@ -984,7 +996,7 @@ const aiAdvice =
             {latest.rawTime}
           </p>
 
-          <p className="text-green-400 mt-2">
+          <p className="text-emerald-400 mt-2">
             Sensor Online
           </p>
 
@@ -1023,7 +1035,7 @@ function KPI({
         {label}
       </p>
 
-      <p className="text-2xl text-green-400 font-bold">
+      <p className="text-2xl text-emerald-400 font-bold">
         {value} {unit}
       </p>
 
@@ -1046,10 +1058,17 @@ function Chart({
   keyName,
   title,
 }: any) {
+  const chartColors = {
+  temp_air: "#22c55e",
+  hum_air: "#38bdf8",
+  temp_soil: "#fbbf24",
+  soil_pct: "#f87171",
+  lux: "#a78bfa",
+};
   return (
     <Card>
 
-      <h3 className="text-green-400 mb-2">
+      <h3 className="text-emerald-400 mb-2">
         {title}
       </h3>
 
@@ -1071,11 +1090,16 @@ function Chart({
           <Tooltip />
 
           <Line
-            type="monotone"
-            dataKey={keyName}
-            stroke="#22c55e"
-            dot={false}
-          />
+  type="monotone"
+  dataKey={keyName}
+  stroke={
+    chartColors[
+      keyName as keyof typeof chartColors
+    ]
+  }
+  strokeWidth={3}
+  dot={false}
+/>
 
         </LineChart>
 
@@ -1096,7 +1120,7 @@ function AnalysisCard({
 }: any) {
 
   const statusColor = {
-    Optimal: "text-green-400",
+    Optimal: "text-emerald-400",
     Panas: "text-yellow-400",
     Lembap: "text-yellow-400",
     Basah: "text-yellow-400",
@@ -1116,7 +1140,7 @@ function AnalysisCard({
 
         <div>
 
-          <h3 className="text-lg font-bold text-green-400">
+          <h3 className="text-lg font-bold text-emerald-400">
             {title}
           </h3>
 
@@ -1178,12 +1202,13 @@ function Card({
   return (
     <div
       className="
-        bg-white/5
-        backdrop-blur-lg
+        bg-slate-800/40
+        border
+        border-slate-700/50
+        backdrop-blur-xl
         rounded-2xl
         p-5
         shadow-xl
-        hover:shadow-green-500/20
         transition
       "
     >
