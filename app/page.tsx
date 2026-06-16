@@ -595,8 +595,7 @@ const aiAdvice =
     <main
   className="
   min-h-screen
-  max-w-7xl
-  mx-auto
+  w-full
   p-8
   bg-gradient-to-br
   from-slate-950
@@ -606,7 +605,7 @@ const aiAdvice =
 "
 >
 
-      <header className="flex justify-between mb-10">
+      <header className="flex flex-col md:flex-row justify-between mb-10 gap-4">
         <h1 className="text-3xl font-bold text-emerald-400">
           Monitoring Microclimate UPT Produksi Benih Tanaman Pangan Hortikutura dan Perkebunan
         </h1>
