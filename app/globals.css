@@ -24,3 +24,16 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+progress {
+  height: 6px;
+}
+
+progress::-webkit-progress-bar {
+  background: #1e293b;
+  border-radius: 999px;
+}
+
+progress::-webkit-progress-value {
+  background: #10b981;
+  border-radius: 999px;
+}
